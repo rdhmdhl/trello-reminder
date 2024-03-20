@@ -41,12 +41,14 @@ function getUsersCards($boards, $userId) {
         // if card contains userId, add card ID to usersCards
         foreach($cards as $card){
             if(in_array($userId, $card->idMembers)){
-                // user is a member of this card
-                $usersCards[] = $card->id;
+                // if card is not complete, add to usersCards
+                if($card->dueComplete != true) {
+                    // user is a member of this card
+                    $usersCards[] = $card;
+                }
             }
         }
     }
-    // print_r($usersCards);
     //return array of user's cards
     return $usersCards;
 }

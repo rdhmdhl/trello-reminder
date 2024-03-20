@@ -18,7 +18,7 @@ function trelloReminder($event) {
 $event = [
     "users" => [
         [
-            "id"=>"60bea1412afb06664eccd452",
+            "id"=>"6499cadd83f4b09a42ba0fcf",
         ]
     ]    
 ];
