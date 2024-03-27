@@ -1,6 +1,5 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
-
 // Load environment variables from .env file
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
@@ -34,7 +33,7 @@ function getAllBoards($userId) {
         // Handle the decoding error
         return []; // Return an empty array
     }
-
+    echo "user " . $userId . " boards are fetched...\n";
     return $boards;
 }
 ?>

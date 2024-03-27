@@ -5,9 +5,8 @@ require __DIR__ . '/vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
-function getUsersCards($boards, $userId) {
-    $usersCards = [];
-
+function getUsersCards($boards) {
+    $allCards = [];
     // Access environment variables
     $apiKey = $_ENV['API_KEY'];
     $apiToken = $_ENV['TOKEN'];
@@ -21,7 +20,7 @@ function getUsersCards($boards, $userId) {
     foreach($boards as $board ) {
         $boardId = $board->id;
         $response = file_get_contents(
-            "https://api.trello.com/1/boards/{$boardId}/cards?" . http_build_query($query)
+            "https://api.trello.com/1/boards/{$boardId}/cards/open?" . http_build_query($query)
         );
         
         if ($response === false) {
@@ -37,19 +36,19 @@ function getUsersCards($boards, $userId) {
             // move to next board
             continue;
         }
-
-        // if card contains userId, add card ID to usersCards
-        foreach($cards as $card){
-            if(in_array($userId, $card->idMembers)){
-                // if card is not complete, add to usersCards
-                if($card->dueComplete != true) {
-                    // user is a member of this card
-                    $usersCards[] = $card;
-                }
-            }
-        }
+        $allCards = array_merge($allCards, $cards);
+        echo "fetched cards for board: " . $board->name;
+        echo "\n";
     }
-    //return array of user's cards
-    return $usersCards;
+    // sort cards for processing in getCheckListItems
+    usort($allCards, function($a, $b){
+        // Prioritize non-empty checkItemStates first
+        $aEmpty = empty($a->checkItemStates) ? 1 : 0;
+        $bEmpty = empty($b->checkItemStates) ? 1 : 0;
+            return $aEmpty <=> $bEmpty;
+    });
+    
+    echo "cards are sorted...\n";
+    return $allCards;
 }
 ?>
